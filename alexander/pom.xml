@@ -29,6 +29,12 @@
             <version>9.12.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.10.2</version> <!-- Asegúrate de usar la versión más reciente -->
+        </dependency>
+
     </dependencies>
 
 </project>

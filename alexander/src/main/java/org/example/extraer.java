@@ -31,7 +31,7 @@ public class extraer {
         Query query = parser.parse(queryStr);
 
         // Realiza la búsqueda y muestra los resultados
-        TopDocs results = searcher.search(query, 10); // Busca los 10 primeros resultados
+        TopDocs results = searcher.search(query, 300); // Busca los 10 primeros resultados
         System.out.println("Resultados encontrados: " + results.totalHits.value);
 
         for (ScoreDoc scoreDoc : results.scoreDocs) {
