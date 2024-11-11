@@ -64,12 +64,62 @@ public class Xpaths {
     }
 
     public String contenido(){
-        return "";
+        try {
+
+            String expresionXpath1 = "//div[@class='ltx_page_content']//text()";
+            XPathExpression expression = this.xpath.compile(expresionXpath1);
+            NodeList nodes = (NodeList) expression.evaluate(this.w3cDoc, XPathConstants.NODESET);
+
+            String resultado = "";
+
+            for (int i = 0; i < nodes.getLength(); i++) {
+                String nodeText = nodes.item(i).getTextContent().trim();
+                if (!nodeText.isEmpty()) {
+                    resultado += nodeText + " ";
+                }
+            }
+            resultado = resultado.replaceAll("\\s+", " ");  // Reemplaza múltiples espacios por uno solo
+            resultado = resultado.trim(); // Elimina los espacios al principio y al final
+
+            if (resultado.isEmpty()){
+                return "NO CONTENT";
+            }
+            return resultado;
+
+        } catch (XPathExpressionException e){
+            return "Error al procesar el archivo";
+        }
     }
 
     public String autores(){
-        return "";
+        try {
+
+            String expresionXpath1 = "//span[@class='ltx_personname']//text()[not(ancestor::sup) and not( ancestor::span[contains(@class,'ltx_note')] ) and not(ancestor::math)]";
+            XPathExpression expression = this.xpath.compile(expresionXpath1);
+            NodeList nodes = (NodeList) expression.evaluate(this.w3cDoc, XPathConstants.NODESET);
+
+            String resultado = "";
+
+            for (int i = 0; i < nodes.getLength(); i++) {
+                String nodeText = nodes.item(i).getTextContent().trim();
+                if (!nodeText.isEmpty()) {
+                    resultado += nodeText + " ";
+                }
+            }
+            //resultado = resultado.replaceAll("\\s+", " ");  // Reemplaza múltiples espacios por uno solo
+            resultado = resultado.replaceAll("\\r?\\n", " ");
+
+
+            if (resultado.isEmpty()){
+                return "NO AUTHORS";
+            }
+            return resultado;
+
+        } catch (XPathExpressionException e){
+            return "Error al procesar el archivo";
+        }
     }
+
 }
 
 
