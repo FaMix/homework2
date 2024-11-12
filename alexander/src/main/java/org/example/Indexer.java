@@ -42,19 +42,22 @@ public class Indexer {
             Map<String, Analyzer> perFieldAnalyzers = new HashMap<>();
             perFieldAnalyzers.put("Tittle", new WhitespaceAnalyzer());
             perFieldAnalyzers.put("Authors", new WhitespaceAnalyzer());
-            perFieldAnalyzers.put("Abstract", new StandardAnalyzer());
+            perFieldAnalyzers.put("Abstract", new EnglishAnalyzer());
             perFieldAnalyzers.put("Content", new EnglishAnalyzer());
 
 
             Analyzer analyzer = new PerFieldAnalyzerWrapper(defaultAnalyzer, perFieldAnalyzers);
-            IndexWriter writer = new IndexWriter(directory, new IndexWriterConfig(analyzer));
+            IndexWriterConfig config = new IndexWriterConfig(analyzer);
+            config.setCodec(new SimpleTextCodec()); // Configuración de SimpleTextCodec para texto plano
+            IndexWriter writer = new IndexWriter(directory, config);
+
             for (int i=0; i<titulos.size(); i++){
                 Document doc = new Document();
                 doc.add(new StringField("NameDoc", nombres.get(i), Field.Store.YES));
                 doc.add(new StringField("Tittle", titulos.get(i), Field.Store.YES));
                 doc.add(new StringField("Authors", autores.get(i), Field.Store.YES));
-                doc.add(new StringField("Abstract", abstracto.get(i), Field.Store.YES));
-                doc.add(new StringField("Content", contenido.get(i), Field.Store.YES));
+                doc.add(new TextField("Abstract", abstracto.get(i), Field.Store.YES));
+                doc.add(new TextField("Content", contenido.get(i), Field.Store.YES));
                 writer.addDocument(doc);
             }
             writer.commit(); // persist changes to the disk
