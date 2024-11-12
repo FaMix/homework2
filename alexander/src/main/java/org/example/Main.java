@@ -37,6 +37,7 @@ public class Main {
         List<String> listaTitulos = new ArrayList<>();
         List<String> listaContenido = new ArrayList<>();
         List<String> listaAutores = new ArrayList<>();
+        List<String> listaAbstract = new ArrayList<>();
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dirPath, "*.html")) {
 
@@ -48,11 +49,14 @@ public class Main {
                 listaAutores.add(autores);
                 //String contenido = filePath.getFileName() + " ---> " + extraer.contenido();
                 //listaContenido.add(contenido);
+                String abstracto = filePath.getFileName() + " ---> " + extraer.abstracto();
+                listaAbstract.add(abstracto);
+
             }
         } catch (IOException e){
             System.out.println("Error al leer los archivos htmls" + e.getMessage());
         }
-        for (String a : listaAutores) {
+        for (String a : listaAbstract) {
             System.out.println(a);
         }
         /*

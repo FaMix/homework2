@@ -63,10 +63,39 @@ public class Xpaths {
         }
     }
 
+    public String abstracto() {
+        try {
+            String expresionXpath1 = "//div[@class='ltx_abstract']//text()";
+            XPathExpression expression = this.xpath.compile(expresionXpath1);
+            NodeList nodes = (NodeList) expression.evaluate(this.w3cDoc, XPathConstants.NODESET);
+
+            String resultado = "";
+
+            for (int i = 0; i < nodes.getLength(); i++) {
+                String nodeText = nodes.item(i).getTextContent().trim();
+                if (!nodeText.isEmpty()) {
+                    resultado += nodeText + " ";
+                }
+            }
+            //resultado = resultado.replaceAll("\\s+", " ");  // Reemplaza múltiples espacios por uno solo
+            resultado = resultado.replaceAll("\\r?\\n", " ");
+
+
+            if (resultado.isEmpty()) {
+                return "NO ABSTRACT";
+            }
+            return resultado;
+
+        } catch (XPathExpressionException e) {
+            return "Error al procesar el archivo";
+        }
+    }
+
+
     public String contenido(){
         try {
 
-            String expresionXpath1 = "//div[@class='ltx_page_content']//text()";
+            String expresionXpath1 = "//section[@class='ltx_section']//div[@class='ltx_para']//text() | //section[@class='ltx_section']//h2[contains(@class,'ltx_title')]//text()";
             XPathExpression expression = this.xpath.compile(expresionXpath1);
             NodeList nodes = (NodeList) expression.evaluate(this.w3cDoc, XPathConstants.NODESET);
 
