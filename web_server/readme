@@ -1,0 +1,9 @@
+me he instalado node.js desde google normal
+en la terminal buscas tu carpeta y 
+    npm install cors
+    npm install express
+
+activar el servidor: node server.js
+desactivar el servidor: control+C
+
+¡Hay que compilar el archivo search_engine antes de ejecutar la busqueda!
