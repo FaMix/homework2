@@ -24,7 +24,7 @@ public class SearchEngine {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        String[] fields = {"Tittle","Authors", "Abstract", "Content"};
+        String[] fields = {"Title","Authors", "Abstract", "Content"};
         int fieldsLength = fields.length;
         String[][] arrays = new String[fields.length][];
 
@@ -61,21 +61,21 @@ public class SearchEngine {
 
             }
         } catch (IOException e) {
-            System.err.println("Error al acceder al índice: " + e.getMessage());
+            System.err.println("Error when trying to access the index: " + e.getMessage());
         }
     }
 
     private static void runQuery(IndexSearcher searcher, Query query) throws IOException {
         TopDocs hits = searcher.search(query, 10);
         if (hits.scoreDocs.length == 0) {
-            System.out.println("No se encontraron resultados para esta consulta.");
+            System.out.println("No results found for this query :(");
         } else {
             for (int i = 0; i < hits.scoreDocs.length; i++) {
                 Document doc = searcher.doc(hits.scoreDocs[i].doc);
-                System.out.println("ID del documento: " + hits.scoreDocs[i].doc +
+                System.out.println("Document ID: " + hits.scoreDocs[i].doc +
                         ", DocName: " + doc.get("NameDoc") +
-                        ", Título: " + doc.get("Tittle") +
-                        ", Puntuación: " + hits.scoreDocs[i].score);
+                        ", Title: " + doc.get("Title") +
+                        ", Mark: " + hits.scoreDocs[i].score);
             }
         }
     }

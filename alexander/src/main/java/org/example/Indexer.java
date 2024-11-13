@@ -46,7 +46,7 @@ public class Indexer {
             Analyzer defaultAnalyzer = new StandardAnalyzer();
 
             Map<String, Analyzer> perFieldAnalyzers = new HashMap<>();
-            perFieldAnalyzers.put("Tittle", new WhitespaceAnalyzer());
+            perFieldAnalyzers.put("Title", new WhitespaceAnalyzer());
             perFieldAnalyzers.put("Authors", new StandardAnalyzer());
             perFieldAnalyzers.put("Abstract", new EnglishAnalyzer());
             perFieldAnalyzers.put("Content", new EnglishAnalyzer());
@@ -60,12 +60,12 @@ public class Indexer {
 
 
             for (int i = 0; i < titulos.size(); i++) {
-                final int index = i; // Variable final para capturar el valor de i
+                final int index = i;
                 executor.submit(() -> {
                     try {
                         Document doc = new Document();
                         doc.add(new TextField("NameDoc", nombres.get(index), Field.Store.YES));
-                        doc.add(new TextField("Tittle", titulos.get(index), Field.Store.YES));
+                        doc.add(new TextField("Title", titulos.get(index), Field.Store.YES));
                         doc.add(new TextField("Authors", autores.get(index), Field.Store.YES));
                         doc.add(new TextField("Abstract", abstracto.get(index), Field.Store.YES));
                         doc.add(new TextField("Content", contenido.get(index), Field.Store.YES));
@@ -74,7 +74,7 @@ public class Indexer {
                         }
                     } catch (Exception e) {
                         System.out.println("Error when writing docs in the Indexer file");
-                        e.printStackTrace(); // Para más detalles sobre el error
+                        e.printStackTrace();
                     }
                 });
             }

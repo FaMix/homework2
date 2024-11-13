@@ -34,7 +34,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-        String path = "../lucene-index"; // Define where to save Lucene index
+        String path = "../lucene-index";
         Path dirPath = Paths.get("../htmls2");
 
         List<String> listaNombres = Collections.synchronizedList(new ArrayList<>());
@@ -44,11 +44,10 @@ public class Main {
         List<String> listaAbstract = Collections.synchronizedList(new ArrayList<>());
 
         start_time = System.nanoTime();
-        // Crear un pool de hilos con un tamaño adecuado al número de núcleos
         int nThreads = Runtime.getRuntime().availableProcessors();
         ExecutorService executor = Executors.newFixedThreadPool(nThreads);
 
-        // Crear una lista de tareas para cada archivo
+
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dirPath, "*.html")) {
             for (Path filePath : stream) {
                 executor.submit(() -> {
