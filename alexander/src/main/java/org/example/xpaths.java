@@ -33,7 +33,7 @@ public class Xpaths {
     }
 
     public String titulos(){// COGER LOS XPATH Y PASARLOS AL MAIN PARA HACER EL INDEX
-        //Recuerda que el titulo es del tipo h1class
+        //Recuerda que el titulo es dgiel tipo h1class
 
         try {
 

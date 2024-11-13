@@ -7,6 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 
 import org.apache.lucene.analysis.Analyzer;
@@ -35,6 +38,9 @@ public class Indexer {
 
     public void index(String filePath,List<String> nombres ,List<String> titulos, List<String> autores, List<String> contenido, List<String> abstracto) throws IOException{
         try {
+            int nThreads = Runtime.getRuntime().availableProcessors();
+            ExecutorService executor = Executors.newFixedThreadPool(nThreads);
+
             Directory directory = FSDirectory.open(Paths.get(filePath)); // Define where to save Lucene index
 
             Analyzer defaultAnalyzer = new StandardAnalyzer();
@@ -51,15 +57,35 @@ public class Indexer {
             config.setCodec(new SimpleTextCodec()); // Configuración de SimpleTextCodec para texto plano
             IndexWriter writer = new IndexWriter(directory, config);
 
-            for (int i=0; i<titulos.size(); i++){
-                Document doc = new Document();
-                doc.add(new StringField("NameDoc", nombres.get(i), Field.Store.YES));
-                doc.add(new StringField("Tittle", titulos.get(i), Field.Store.YES));
-                doc.add(new StringField("Authors", autores.get(i), Field.Store.YES));
-                doc.add(new TextField("Abstract", abstracto.get(i), Field.Store.YES));
-                doc.add(new TextField("Content", contenido.get(i), Field.Store.YES));
-                writer.addDocument(doc);
+
+
+            for (int i = 0; i < titulos.size(); i++) {
+                final int index = i; // Variable final para capturar el valor de i
+                executor.submit(() -> {
+                    try {
+                        Document doc = new Document();
+                        doc.add(new StringField("NameDoc", nombres.get(index), Field.Store.YES));
+                        doc.add(new StringField("Tittle", titulos.get(index), Field.Store.YES));
+                        doc.add(new StringField("Authors", autores.get(index), Field.Store.YES));
+                        doc.add(new TextField("Abstract", abstracto.get(index), Field.Store.YES));
+                        doc.add(new TextField("Content", contenido.get(index), Field.Store.YES));
+                        synchronized (writer) {
+                            writer.addDocument(doc);
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Error when writing docs in the Indexer file");
+                        e.printStackTrace(); // Para más detalles sobre el error
+                    }
+                });
             }
+
+            executor.shutdown();
+            try{
+                executor.awaitTermination(1, TimeUnit.HOURS);
+            }catch (Exception e){
+                System.out.println("Error when waiting threads -> " + e.getMessage());
+            };
+
             writer.commit(); // persist changes to the disk
             writer.close();
 
