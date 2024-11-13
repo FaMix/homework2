@@ -47,14 +47,14 @@ public class Indexer {
 
             Map<String, Analyzer> perFieldAnalyzers = new HashMap<>();
             perFieldAnalyzers.put("Tittle", new WhitespaceAnalyzer());
-            perFieldAnalyzers.put("Authors", new WhitespaceAnalyzer());
+            perFieldAnalyzers.put("Authors", new StandardAnalyzer());
             perFieldAnalyzers.put("Abstract", new EnglishAnalyzer());
             perFieldAnalyzers.put("Content", new EnglishAnalyzer());
 
 
             Analyzer analyzer = new PerFieldAnalyzerWrapper(defaultAnalyzer, perFieldAnalyzers);
             IndexWriterConfig config = new IndexWriterConfig(analyzer);
-            config.setCodec(new SimpleTextCodec()); // Configuración de SimpleTextCodec para texto plano
+            //config.setCodec(new SimpleTextCodec()); // We prefer to create files in binary rather than on .scf or plain text, because it is more efficient
             IndexWriter writer = new IndexWriter(directory, config);
 
 
@@ -64,9 +64,9 @@ public class Indexer {
                 executor.submit(() -> {
                     try {
                         Document doc = new Document();
-                        doc.add(new StringField("NameDoc", nombres.get(index), Field.Store.YES));
-                        doc.add(new StringField("Tittle", titulos.get(index), Field.Store.YES));
-                        doc.add(new StringField("Authors", autores.get(index), Field.Store.YES));
+                        doc.add(new TextField("NameDoc", nombres.get(index), Field.Store.YES));
+                        doc.add(new TextField("Tittle", titulos.get(index), Field.Store.YES));
+                        doc.add(new TextField("Authors", autores.get(index), Field.Store.YES));
                         doc.add(new TextField("Abstract", abstracto.get(index), Field.Store.YES));
                         doc.add(new TextField("Content", contenido.get(index), Field.Store.YES));
                         synchronized (writer) {

@@ -72,6 +72,32 @@
             <version>1.10.2</version> <!-- Asegúrate de usar la versión más reciente -->
         </dependency>
 
+
+        <!-- Dependencia para Spring Boot -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>3.0.0</version> <!-- Asegúrate de usar la versión más reciente -->
+        </dependency>
+
+        <!-- Dependencia para trabajar con JSON -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-json</artifactId>
+            <version>3.0.0</version> <!-- Usar la misma versión que Spring Boot -->
+        </dependency>
+
     </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Plugin de Spring Boot para ejecución del proyecto -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.0.0</version> <!-- Usar la misma versión que Spring Boot -->
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

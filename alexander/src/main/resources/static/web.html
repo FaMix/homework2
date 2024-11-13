@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework search engine</title>
+</head>
+<body>
+    <h1>Introduce the data you would like to search: </h1>
+
+    <label for="Title">Tittle:</label>
+    <input type="text" id="Title"><br><br>
+
+    <label for="Authors">Authors:</label>
+    <input type="text" id="Authors"><br><br>
+
+    <label for="Abstract">Abstract:</label>
+    <input type="text" id="Abstract"><br><br>
+
+    <label for="Content">Content:</label>
+    <input type="text" id="Content"><br><br>
+
+    <button onclick="sendData()">Send</button>
+
+    <script>
+        function sendData(){
+            const Title  = document.getElementById('Title').value;
+            const Authors = document.getElementById('Authors').value;
+            const Abstract = document.getElementById('Abstract').value;
+            const Content = document.getElementById('Content').value;
+            
+            const data ={
+                Title: Title,
+                Authors: Authors,
+                Abstract: Abstract,
+                Content: Content
+            };
+
+            fetch('http://localhost:8080/api/receive', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(Response => Response.json())
+            .then(data => {
+                //alert('Data send correctly');
+                console.log('Response from server: ', data);
+            })
+            .catch(Error => {
+                console.error('Error: ', Error);
+            })
+
+        }
+    </script>
+
+</body>
+</html>
