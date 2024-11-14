@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @SpringBootApplication
@@ -17,25 +18,24 @@ public class server {
     @RequestMapping("/api")
     public class DataController {
 
-        private Map<String, Object> receivedData;
+        private Map<String, List<String>> receivedData;
 
         @PostMapping("/receive")
         public Map<String, Object> receiveData(@RequestBody Map<String, Object> data) {
             System.out.println("Data received: " + data);
-            this.receivedData = data;
-            return Map.of("message", "Data received correctly", "receivedData", data);
-        }
+            //System.out.println(data.getClass());
+            SearchEngine engine = new SearchEngine();
+            this.receivedData = engine.search(data);
 
-        @GetMapping("/getData")
-        public Map<String, Object> getData() {
-            if (this.receivedData != null) {
-                return Map.of("message", "Data retrieved successfully", "data", this.receivedData);
+            return Map.of("message", "Data received correctly", "receivedData", this.receivedData);
+        }
+        @GetMapping("/data")
+        public Map<String, Object> getReceivedData() {
+            if (receivedData != null) {
+                return Map.of("message", "Data retrieved successfully", "receivedData", receivedData);
             } else {
-                return Map.of("message", "No data received yet");
+                return Map.of("message", "No data available");
             }
         }
-
-
-
     }
 }

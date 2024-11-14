@@ -8,7 +8,7 @@
 <body>
     <h1>Introduce the data you would like to search: </h1>
 
-    <label for="Title">Tittle:</label>
+    <label for="Title">Title:</label>
     <input type="text" id="Title"><br><br>
 
     <label for="Authors">Authors:</label>
@@ -21,6 +21,10 @@
     <input type="text" id="Content"><br><br>
 
     <button onclick="sendData()">Send</button>
+    <!--<button onclick="fetchData()">Show Received Data</button> -->
+
+    <!-- Contenedor donde se mostrará la respuesta -->
+    <div id="responseContainer" style="margin-top: 20px;"></div>
 
     <script>
         function sendData(){
@@ -29,13 +33,14 @@
             const Abstract = document.getElementById('Abstract').value;
             const Content = document.getElementById('Content').value;
             
-            const data ={
+            const data = {
                 Title: Title,
                 Authors: Authors,
                 Abstract: Abstract,
                 Content: Content
             };
 
+            // Enviar datos con POST
             fetch('http://localhost:8080/api/receive', {
                 method: 'POST',
                 headers: {
@@ -43,15 +48,43 @@
                 },
                 body: JSON.stringify(data)
             })
-            .then(Response => Response.json())
+            .then(response => response.json())
             .then(data => {
-                //alert('Data send correctly');
-                console.log('Response from server: ', data);
+                alert('Data sent correctly');
+                console.log('Response from server (POST): ', data);
+                
+                fetchData();
             })
-            .catch(Error => {
-                console.error('Error: ', Error);
-            })
+            .catch(error => {
+                console.error('Error (POST): ', error);
+            });
+        }
 
+        function fetchData(){
+            // Hacer una solicitud GET a /api/data
+            fetch('http://localhost:8080/api/data')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Response from server (GET): ', data);
+                
+                // Mostrar los datos recibidos en el contenedor
+                const responseContainer = document.getElementById('responseContainer');
+                
+                if (data.receivedData) {
+                    responseContainer.innerHTML = `
+                        <h3>Received Data:</h3>
+                        <p><strong>Results for Title:</strong> ${data.receivedData.Title || ''}</p>
+                        <p><strong>Results for Authors:</strong> ${data.receivedData.Authors || ''}</p>
+                        <p><strong>Results for Abstract:</strong> ${data.receivedData.Abstract || ''}</p>
+                        <p><strong>Results for Content:</strong> ${data.receivedData.Content || ''}</p>
+                    `;
+                } else {
+                    responseContainer.innerHTML = '<p>No data available.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error (GET): ', error);
+            });
         }
     </script>
 
