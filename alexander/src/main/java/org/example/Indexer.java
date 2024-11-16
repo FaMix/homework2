@@ -38,8 +38,8 @@ public class Indexer {
 
     public void index(String filePath,List<String> nombres ,List<String> titulos, List<String> autores, List<String> contenido, List<String> abstracto) throws IOException{
         try {
-            int nThreads = Runtime.getRuntime().availableProcessors();
-            ExecutorService executor = Executors.newFixedThreadPool(nThreads);
+            //int nThreads = Runtime.getRuntime().availableProcessors();
+            //ExecutorService executor = Executors.newFixedThreadPool(nThreads);
 
             Directory directory = FSDirectory.open(Paths.get(filePath)); // Define where to save Lucene index
 
@@ -54,14 +54,14 @@ public class Indexer {
 
             Analyzer analyzer = new PerFieldAnalyzerWrapper(defaultAnalyzer, perFieldAnalyzers);
             IndexWriterConfig config = new IndexWriterConfig(analyzer);
-            //config.setCodec(new SimpleTextCodec()); // We prefer to create files in binary rather than on .scf or plain text, because it is more efficient
+            config.setCodec(new SimpleTextCodec()); // We prefer to create files in binary rather than on .scf or plain text, because it is more efficient
             IndexWriter writer = new IndexWriter(directory, config);
 
 
 
             for (int i = 0; i < titulos.size(); i++) {
                 final int index = i;
-                executor.submit(() -> {
+
                     try {
                         Document doc = new Document();
                         doc.add(new TextField("NameDoc", nombres.get(index), Field.Store.YES));
@@ -69,22 +69,22 @@ public class Indexer {
                         doc.add(new TextField("Authors", autores.get(index), Field.Store.YES));
                         doc.add(new TextField("Abstract", abstracto.get(index), Field.Store.YES));
                         doc.add(new TextField("Content", contenido.get(index), Field.Store.YES));
-                        synchronized (writer) {
-                            writer.addDocument(doc);
-                        }
+
+                        writer.addDocument(doc);
+
                     } catch (Exception e) {
                         System.out.println("Error when writing docs in the Indexer file");
                         e.printStackTrace();
                     }
-                });
+
             }
 
-            executor.shutdown();
-            try{
-                executor.awaitTermination(1, TimeUnit.HOURS);
-            }catch (Exception e){
-                System.out.println("Error when waiting threads -> " + e.getMessage());
-            };
+            //executor.shutdown();
+//            try{
+//                executor.awaitTermination(1, TimeUnit.HOURS);
+//            }catch (Exception e){
+//                System.out.println("Error when waiting threads -> " + e.getMessage());
+//            };
 
             writer.commit(); // persist changes to the disk
             writer.close();

@@ -44,13 +44,14 @@ public class Main {
         List<String> listaAbstract = Collections.synchronizedList(new ArrayList<>());
 
         start_time = System.nanoTime();
-        int nThreads = Runtime.getRuntime().availableProcessors();
-        ExecutorService executor = Executors.newFixedThreadPool(nThreads);
+        //int nThreads = Runtime.getRuntime().availableProcessors();
+        //ExecutorService executor = Executors.newFixedThreadPool(nThreads);
+
 
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dirPath, "*.html")) {
             for (Path filePath : stream) {
-                executor.submit(() -> {
+
                     try {
                         Xpaths extraer = new Xpaths(filePath);
 
@@ -62,18 +63,18 @@ public class Main {
                     } catch (Exception e) {
                         System.out.println("Error when procesing the HTML file -> " + listaNombres.get(listaNombres.size() - 1) +" ---> Error: "+ e.getMessage());
                     }
-                });
+
             }
         } catch (IOException e) {
             System.out.println("Error when reading HTML files: " + e.getMessage());
         }
 
-        executor.shutdown();
-        try{
-            executor.awaitTermination(1, TimeUnit.HOURS);
-        }catch (Exception e){
-            System.out.println("Error when waiting threads -> " + e.getMessage());
-        };
+//        executor.shutdown();
+//        try{
+//            executor.awaitTermination(1, TimeUnit.HOURS);
+//        }catch (Exception e){
+//            System.out.println("Error when waiting threads -> " + e.getMessage());
+//        };
 
         end_time = System.nanoTime();
         double xpath_time = (end_time - start_time)/1000000;

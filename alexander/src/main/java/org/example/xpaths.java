@@ -79,6 +79,7 @@ public class Xpaths {
             }
             //resultado = resultado.replaceAll("\\s+", " ");  // Reemplaza múltiples espacios por uno solo
             resultado = resultado.replaceAll("\\r?\\n", " ");
+            resultado = resultado.replaceAll("\\s+", " ").trim();
 
 
             if (resultado.isEmpty()) {
@@ -107,8 +108,9 @@ public class Xpaths {
                     resultado += nodeText + " ";
                 }
             }
-            resultado = resultado.replaceAll("\\s+", " ");  // Reemplaza múltiples espacios por uno solo
-            resultado = resultado.trim(); // Elimina los espacios al principio y al final
+            resultado = resultado.replaceAll("\\r?\\n", " ");
+            resultado = resultado.replaceAll("\\s+", " ").trim();  // Reemplaza múltiples espacios por uno solo
+
 
             if (resultado.isEmpty()){
                 return "NO CONTENT";
@@ -137,6 +139,7 @@ public class Xpaths {
             }
             //resultado = resultado.replaceAll("\\s+", " ");  // Reemplaza múltiples espacios por uno solo
             resultado = resultado.replaceAll("\\r?\\n", " ");
+            resultado = resultado.replaceAll("\\s+", " ").trim();
 
 
             if (resultado.isEmpty()){

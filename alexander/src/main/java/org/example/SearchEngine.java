@@ -5,6 +5,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.CharArraySet;
+import org.apache.lucene.analysis.LowerCaseFilter;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.DirectoryReader;
@@ -19,61 +27,50 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.springframework.web.bind.annotation.MatrixVariable;
+import org.apache.lucene.queryparser.classic.*;
 
 public class SearchEngine {
 
-    public static Map<String, List<String>> search(Map<String, Object> mapa) {
-        //Scanner scanner = new Scanner(System.in);
-        String[] fields = {"Title","Authors", "Abstract", "Content"};
-        int fieldsLength = fields.length;
-        String[][] arrays = new String[fields.length][];
+    public static Map<String, List<String>> search(Map<String, Object> inputMap) {
+        String[] fields = {"Title", "Authors", "Abstract", "Content"};
+        Analyzer[] analyzers = {new WhitespaceAnalyzer(), new StandardAnalyzer(), new EnglishAnalyzer(), new EnglishAnalyzer()};
         Map<String, List<String>> matrixResults = new HashMap<>();
+        Path indexPath = Paths.get("../lucene-index");
 
-        int index = 0;
-        for (Map.Entry<String, Object> entry : mapa.entrySet()){
-            String a= entry.getValue().toString();
-            arrays[index] = a.split("\\s+");
-            index++;
-            if (index >= 4){
-                break;
-            }
-        }
+        try (Directory directory = FSDirectory.open(indexPath);
+             IndexReader indexReader = DirectoryReader.open(directory)) {
 
-        try {
-            // Directorio donde se encuentra el índice binario
-            Path indexPath = Paths.get("../lucene-index");
-            try (Directory directory = FSDirectory.open(indexPath);
-                 IndexReader indexReader = DirectoryReader.open(directory)) {
+            IndexSearcher searcher = new IndexSearcher(indexReader);
+            int index = 0;
 
-                IndexSearcher searcher = new IndexSearcher(indexReader);
-
-                PhraseQuery.Builder[] builders = new PhraseQuery.Builder[fieldsLength];
-
-                for (int j=0; j<fieldsLength; j++) {
-                    builders[j] = new PhraseQuery.Builder();
-                    String[] words = arrays[j];
-
-                    for (int i = 0; i < words.length; i++) {
-                        builders[j].add(new Term(fields[j], words[i]), i);
-                    }
-                    //System.out.println("\nResults for " + fields[j] + ": ");
-                    PhraseQuery query = builders[j].build();
-                    List<String> results = runQuery(searcher, query);
-                    matrixResults.put(fields[j], results);
-                    //matrixResults[j] = results.toArray(new String[0]);
-                    //matrixResults.put(fields[j], results.toArray(new String[0]));
+            for (Map.Entry<String, Object> entry : inputMap.entrySet()) {
+                if (index >= fields.length || index >= analyzers.length) {
+                    break;
                 }
-
-                //matrixResults.forEach((key, value) -> System.out.println(key + " -> " + Arrays.toString((String[]) value)));
-
+                String valor = entry.getValue().toString();
+                if (valor == null || valor.trim().isEmpty()) {
+                    System.out.println("Skipping empty or null value for key: " + entry.getKey());
+                    List<String> notFound = new ArrayList<>();
+                    notFound.add("<span style='color:red;'><b>No results found for this query :(</b></span>");
+                    matrixResults.put(entry.getKey(),notFound);
+                    index++;
+                    continue;
+                }
+                String userQuery = QueryParser.escape(valor);
+                QueryParser queryParser = new QueryParser(fields[index], analyzers[index]);
+                Query query = queryParser.parse(userQuery);
+                List<String> results = runQuery(searcher, query);
+                matrixResults.put(fields[index], results);
+                index++;
             }
-        } catch (IOException e) {
-            System.err.println("Error when trying to access the index: " + e.getMessage());
-        }
 
-        matrixResults.forEach((field, words) -> {
-            System.out.println("[" + field + ", " + words + "]");
-        });
+        } catch (IOException e) {
+            System.err.println("Error accessing the index: " + e.getMessage());
+        } catch (ParseException e) {
+            System.err.println("Error parsing the query: " + e.getMessage());
+        }
+        matrixResults.forEach((key, value) -> System.out.println(key + " -> " + value));
+
         return matrixResults;
     }
 
@@ -83,14 +80,14 @@ public class SearchEngine {
         List<String> values = new ArrayList<>();
         if (hits.scoreDocs.length == 0) {
             values.add("<span style='color:red;'><b>No results found for this query :(</b></span>");
-            return  values;
+            return values;
         } else {
             for (int i = 0; i < hits.scoreDocs.length; i++) {
                 Document doc = searcher.doc(hits.scoreDocs[i].doc);
                 String valor = "<br><span style='color:green;'><b>Document ID:</b></span> " + hits.scoreDocs[i].doc +
-                        ", DocName: " + doc.get("NameDoc") +
-                        ", Title: " + doc.get("Title") +
-                        ", Mark: " + hits.scoreDocs[i].score + "<br>";
+                        ", <span style='color:green;'><b>DocName</b></span>: " + doc.get("NameDoc") +
+                        ", <span style='color:green;'><b>Title:</b></span> " + doc.get("Title") +
+                        ", <span style='color:green;'><b>Mark:</b></span> " + "<b> "+hits.scoreDocs[i].score + "</b>" + "<br>";
                 values.add(valor);
             }
             return values;

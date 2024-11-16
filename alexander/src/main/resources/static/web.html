@@ -4,23 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Homework search engine</title>
+    <style>
+         body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('image.jpg');
+            margin: 0;
+            font-family: Arial, sans-serif;
+            flex-direction: column; /* Apilamos los elementos de forma vertical */
+            padding: 10px;
+            text-align: center; /* Centra el texto */
+        }
+        /* Contenedor de los botones */
+        .button-container {
+            display: flex; /* Usamos flexbox para que los botones estén en línea */
+            justify-content: center; /* Centra los botones horizontalmente */
+            gap: 20px; /* Espacio entre los botones */
+        }
+        h1 {
+            text-align: center;  /* Centra el texto dentro del <h1> */
+            font-size: 2.5rem;    /* Tamaño de fuente */
+            margin: 0;
+            margin-bottom: 20px;            /* Eliminar márgenes adicionales del <h1> */
+        }
+        label {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        input {
+            width: 98%; /* Hace que el input ocupe el 100% del ancho disponible */
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            box-sizing: border-box; /* Incluye el padding dentro del tamaño total */
+            margin-bottom: 0px;
+        }
+        .form-container {
+            max-width: 100%; /* Para que ocupe todo el ancho de la pantalla */
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        button {  /* Hace que el botón ocupe el 100% del ancho del contenedor */
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+            font-size: 14px;
+            background-color: #4c9daf; /* Fondo verde */
+            color: rgb(0, 0, 0); /* Texto blanco */
+            border: none; /* Sin bordes */
+            cursor: pointer; /* Puntero de mano */
+            margin-top: 10px; /* Separación entre el último input y el botón */
+            box-sizing: border-box;
+            border-radius: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+
+    </style>
+    
 </head>
 <body>
-    <h1>Introduce the data you would like to search: </h1>
+    <h1>Homework search engine</h1>
 
-    <label for="Title">Title:</label>
-    <input type="text" id="Title"><br><br>
+    <!-- <label for="Title">Title:</label> -->
+    <input type="text" id="Title" placeholder="Enter title here"><br><br>
 
-    <label for="Authors">Authors:</label>
-    <input type="text" id="Authors"><br><br>
+    <!-- <label for="Authors">Authors:</label> -->
+    <input type="text" id="Authors" placeholder="Enter authors here"><br><br>
 
-    <label for="Abstract">Abstract:</label>
-    <input type="text" id="Abstract"><br><br>
+    <!-- <label for="Abstract">Abstract:</label> -->
+    <input type="text" id="Abstract" placeholder="Enter abstract here"><br><br>
 
-    <label for="Content">Content:</label>
-    <input type="text" id="Content"><br><br>
+    <!-- <label for="Content">Content:</label> -->
+    <input type="text" id="Content" placeholder="Enter content here"><br><br>
+    <div class="button-container">
+        <button onclick="sendData()">Separated</button>
+        <button onclick="sendData()">All together</button>
+    </div>
 
-    <button onclick="sendData()">Send</button>
     <!--<button onclick="fetchData()">Show Received Data</button> -->
 
     <!-- Contenedor donde se mostrará la respuesta -->
@@ -72,7 +136,6 @@
                 
                 if (data.receivedData) {
                     responseContainer.innerHTML = `
-                        <h3>Received Data:</h3>
                         <p><strong>Results for Title:</strong> ${data.receivedData.Title || ''}</p>
                         <p><strong>Results for Authors:</strong> ${data.receivedData.Authors || ''}</p>
                         <p><strong>Results for Abstract:</strong> ${data.receivedData.Abstract || ''}</p>
