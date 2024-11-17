@@ -81,8 +81,8 @@
     <!-- <label for="Content">Content:</label> -->
     <input type="text" id="Content" placeholder="Enter content here"><br><br>
     <div class="button-container">
-        <button onclick="sendData()">Separated</button>
-        <button onclick="sendData()">All together</button>
+        <button onclick="sendData(event)">Separated</button>
+        <button onclick="sendData(event)">All together</button>
     </div>
 
     <!--<button onclick="fetchData()">Show Received Data</button> -->
@@ -91,7 +91,7 @@
     <div id="responseContainer" style="margin-top: 20px;"></div>
 
     <script>
-        function sendData(){
+        function sendData(event) {
             const Title  = document.getElementById('Title').value;
             const Authors = document.getElementById('Authors').value;
             const Abstract = document.getElementById('Abstract').value;
@@ -103,28 +103,38 @@
                 Abstract: Abstract,
                 Content: Content
             };
+            
+            const buttonText = event.target.textContent; // Ahora event está definido
+            let url;
+            if (buttonText === 'Separated') {
+                url = 'http://localhost:8080/api/receive';
+            } else if (buttonText === 'All together') {
+                url = 'http://localhost:8080/api/receiveAll';
+            }
 
-            // Enviar datos con POST
-            fetch('http://localhost:8080/api/receive', {
+            fetch(url, {
                 method: 'POST',
                 headers: {
-                    'Content-type': 'application/json'
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(data)
             })
             .then(response => response.json())
             .then(data => {
-                alert('Data sent correctly');
                 console.log('Response from server (POST): ', data);
-                
-                fetchData();
+                if (buttonText === "Separated") {
+                    fetchDataSeparated();
+                } else if (buttonText === "All together") {
+                    fetchDataAllTogether();
+                }
             })
             .catch(error => {
                 console.error('Error (POST): ', error);
             });
         }
 
-        function fetchData(){
+
+        function fetchDataSeparated(){
             // Hacer una solicitud GET a /api/data
             fetch('http://localhost:8080/api/data')
             .then(response => response.json())
@@ -149,6 +159,32 @@
                 console.error('Error (GET): ', error);
             });
         }
+
+        
+        function fetchDataAllTogether(){
+            // Hacer una solicitud GET a /api/data
+            fetch('http://localhost:8080/api/dataAll')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Response from server (GET): ', data);
+                
+                // Mostrar los datos recibidos en el contenedor
+                const responseContainer = document.getElementById('responseContainer');
+                
+                if (data.receivedData) {
+                    responseContainer.innerHTML = `
+                        <p><strong>Results:</strong> ${data.receivedData.AllTogether || ''}</p>
+                    `;
+                } else {
+                    responseContainer.innerHTML = '<p>No data available.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error (GET): ', error);
+            });
+        }
+
+
     </script>
 
 </body>
