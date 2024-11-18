@@ -69,6 +69,7 @@ public class XPathExtractor {
                 }
             }
             String output = result.toString().replaceAll("\\r?\\n", " ").trim();
+            output = output.replaceAll("\\s+", " ").trim();
 
             return output.isEmpty() ? "NO ABSTRACT" : output;
 
@@ -117,6 +118,7 @@ public class XPathExtractor {
                 }
             }
             String output = result.toString().replaceAll("\\r?\\n", " ").trim();
+            output = output.replaceAll("\\s+", " ").trim();
 
             return output.isEmpty() ? "NO AUTHORS" : output;
 
