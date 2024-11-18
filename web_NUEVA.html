@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Engine</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #a8dbcf;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+
+        /* Estilo del textarea para mantener un ancho fijo y altura automática */
+        textarea {
+            width: 100%;
+            max-width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 2px solid #cdbdbd;
+            border-radius: 5px;
+            font-size: 16px;
+            resize: none;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+            margin-right: 5px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Contenedor para los botones */
+        .button-container {
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Search Engine</h1>
+
+    <div class="form-group">
+        <label for="Title">Title:</label>
+        <textarea id="Title" rows="1" oninput="autoResize(this)"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="Authors">Authors:</label>
+        <textarea id="Authors" rows="1" oninput="autoResize(this)"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="Abstract">Abstract:</label>
+        <textarea id="Abstract" rows="1" oninput="autoResize(this)"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="Content">Content:</label>
+        <textarea id="Content" rows="1" oninput="autoResize(this)"></textarea>
+    </div>
+
+    <!-- Contenedor de botones -->
+    <div class="button-container">
+        <button onclick="sendAllTogether()">Send All-Together</button>
+        <button onclick="sendSeparated()">Send Separated</button>
+    </div>
+
+    <script>
+        // Función que ajusta la altura del textarea en función del contenido
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = `${textarea.scrollHeight}px`;
+        }
+
+        // Función para enviar todos los datos juntos
+        function sendAllTogether() {
+            const data = {
+                Title: document.getElementById('Title').value,
+                Authors: document.getElementById('Authors').value,
+                Abstract: document.getElementById('Abstract').value,
+                Content: document.getElementById('Content').value
+            };
+
+            // Enviar todos los datos en una sola solicitud POST
+            fetch('http://localhost:8080/api/receiveAll', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('All data sent together successfully');
+                console.log('Response from server (POST All-Together): ', data);
+            })
+            .catch(error => {
+                console.error('Error (POST All-Together): ', error);
+            });
+        }
+
+        // Función para enviar cada campo de datos por separado
+        function sendSeparated() {
+            const fields = ["Title", "Authors", "Abstract", "Content"];
+
+            // Enviar cada campo por separado con solicitudes POST individuales
+            fields.forEach(field => {
+                const value = document.getElementById(field).value;
+                const data = { [field]: value };
+
+                fetch(`http://localhost:8080/api/receive${field}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(`Response from server (POST ${field}): `, data);
+                })
+                .catch(error => {
+                    console.error(`Error (POST ${field}): `, error);
+                });
+            });
+
+            alert('Each field sent separately');
+        }
+    </script>
+</body>
+</html>
