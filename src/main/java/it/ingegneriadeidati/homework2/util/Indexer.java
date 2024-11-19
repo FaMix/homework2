@@ -1,4 +1,4 @@
-package main.homework2;
+package it.ingegneriadeidati.homework2.util;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -80,7 +80,7 @@ public class Indexer {
      */
     private IndexWriter createIndexWriter(Directory directory, Analyzer analyzer) throws IOException {
         IndexWriterConfig config = new IndexWriterConfig(analyzer);
-        config.setCodec(new SimpleTextCodec()); // We prefer to create files in binary rather than on .scf or plain text, because it is more efficient
+        //config.setCodec(new SimpleTextCodec()); // We prefer to create files in binary rather than on .scf or plain text, because it is more efficient
         return new IndexWriter(directory, config);
     }
 

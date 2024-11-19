@@ -1,10 +1,10 @@
-package main.homework2.controller;
+package it.ingegneriadeidati.homework2.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import main.homework2.SearchEngine;
+import it.ingegneriadeidati.homework2.service.SearchEngine;
 
 import java.util.List;
 import java.util.Map;

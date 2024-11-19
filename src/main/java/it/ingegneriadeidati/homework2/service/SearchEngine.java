@@ -1,4 +1,4 @@
-package main.homework2;
+package it.ingegneriadeidati.homework2.service;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;

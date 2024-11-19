@@ -1,4 +1,4 @@
-package main.homework2;
+package it.ingegneriadeidati.homework2.app;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -9,13 +9,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import it.ingegneriadeidati.homework2.util.Indexer;
+import it.ingegneriadeidati.homework2.util.XPathExtractor;
+
 public class HTMLIndexerApp {
 
     private static double start_time, end_time;
 
     public static void main(String[] args) throws IOException {
         String indexPath = "../lucene-index";
-        Path htmlDirectoryPath = Paths.get("../htmls2");
+        Path htmlDirectoryPath = Paths.get("../all_htmls");
 
         // Thread-safe lists to store extracted data
         List<String> fileNames = Collections.synchronizedList(new ArrayList<>());
